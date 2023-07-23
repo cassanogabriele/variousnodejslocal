@@ -1,0 +1,46 @@
+<!-- 
+- extends layout : permet de déclarer que le modèle index hérite du modèle layout, la page sera basée sur le modèle layout.
+- block content : partant du template laoyout, on remplira le bloc content par le contenu  inscrit (ici, un titre h1 et une ligne de texte p).
+-->
+extends layout
+
+doctype html
+html(lang="fr")
+
+block content
+  h1= title
+  p#para Bienvenue sur #{title}
+  h1#other Mes réalisations
+  
+  div#content
+
+  ul.nav
+  li
+    a(href="http://titansclub.eu/") Titans Club 
+  li
+    a(href="http://secretface.lescigales.org/") Secret Faces (WordPress)
+  li
+    a(href="http://secretface.lescigales.org/") Secret Faces Biography (PHP, jQuery)
+  li
+    a(href="http://www.homesweethomedesign.be/") Home Sweet Home (PHP, JavaScript, jQuery)
+  li
+    a(href="http://www.iljavascript.site/") I learn JavaScript (JavaScript, jQuery, Ajax, Node JS)
+  li
+    a(href="http://www.guitlearning.site/") Guitar Learning (Materialize, Sass)
+  li
+    a(href="http://developpementinformatique.be/") Développement informatique (Joomla)
+  li
+    a(href="http://www.easilylearntocook.be/") Easily learn to cook (Drupal)
+  li
+    a(href="http://prsh.eu/ecommerce/fr/") My lower price shop (Prestashop)
+  li
+    a(href="http://readingpassion.online/") Reading passion (Symfony2)
+  li
+    a(href="http://ilovemovies.site/") I love movies (Laravel)
+  li
+    a(href="http://mycdcolllection.site/framework/public/") My cd collection (Zend Framework 2)
+  li
+    a(href="http://musicmaniac.site/") Music Maniac (MVC PHP, JavaScript, jQuery)
+  li
+    a(href="http://www.movieslibrary.fun/#/list") Movies Library (AngularJS, json)
+ 

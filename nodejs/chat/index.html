@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Super Chat temps réel !</title>
+        <style>
+            #zone_chat strong {
+                color: white;
+                background-color: black;
+                padding: 2px;
+            }
+        </style>
+    </head>
+ 
+    <body>
+        <h1>Le super Chat temps réel !</h1>
+
+        <form action="/" method="post" id="formulaire_chat">
+            <input type="text" name="message" id="message" placeholder="Votre message..." size="50" autofocus />
+            <input type="submit" id="envoi_message" value="Envoyer" />
+        </form>
+
+        <section id="zone_chat">
+            
+        </section>
+
+
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+
+            // Connexion à socket.io
+            var socket = io.connect('http://localhost:8080');
+
+            // On demande le pseudo, on l'envoie au serveur et on l'affiche dans le titre.
+			
+			/*
+			Le pseudo est demandé au client et on l'envoi au serveur principal via un signal de type "nouveau client", on affiche le pseudo dans le "<title>" de la page 
+			pour qu'il apparaisse dans les onglets du navigateur car pour les tests, on va ouvrir plusieurs onglets sur la machine, comme ça aide à se souvenir de qui sont 
+			les utilisateurs.
+			*/
+            var pseudo = prompt('Quel est votre pseudo ?');
+            socket.emit('nouveau_client', pseudo);
+            document.title = pseudo + ' - ' + document.title;
+
+            // Quand on reçoit un message, on l'insère dans la page.
+			
+			/*
+			C'est la récupération du signal "message" envoyé par le serveur, on insère le message dans la zone #zone_chat de la page. On crée une fonction pour ça car on a 
+			aussi besoin de cette fonctionnalité au moment de l'envoi du formulaire.
+			*/
+            socket.on('message', function(data) {
+                insereMessage(data.pseudo, data.message)
+            })
+
+            // Quand un nouveau client se connecte, on affiche l'information qu'un nouveau client à rejoint le chat.
+			 socket.on('nouveau_client', function(pseudo) {
+                $('#zone_chat').prepend('<p><em>' + pseudo + ' a rejoint le Chat !</em></p>');
+            })
+			
+			// Gestion de l'envoi du formulaire.
+
+            // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page.
+			
+			/*
+			Il faut récupérer le message saisi par le client, l'envoyer au serveur et l'insérer dans la page car le serveur transmet le message à tout le monde sauf à nous.
+			On vide la zone de texte et on remet le focus dessus, on bloque l'envoi du formulaire. Le "return false" (équivalent du preventDefault() de jQuery) est indispensable 
+			si on ne veut pas que la page se recharge suite à l'envoi du formulaire. La fonction "insereMessage" rajoute le message qu'on envoie avec le pseudo dans la zone de 
+			chat au début, la fonction prepend() fait partie de jQuery.
+			*/
+            $('#formulaire_chat').submit(function () {
+                var message = $('#message').val();
+				// Transmet le message aux autres
+                socket.emit('message', message); 
+				// Affiche le message aussi sur notre page
+                insereMessage(pseudo, message); 
+				// Vide la zone de Chat et remet le focus dessus
+                $('#message').val('').focus(); 
+				// Permet de bloquer l'envoi "classique" du formulaire
+                return false; 
+            });
+            
+            // Ajoute un message dans la page
+            function insereMessage(pseudo, message) {
+                $('#zone_chat').prepend('<p><strong>' + pseudo + '</strong> ' + message + '</p>');
+            }
+        </script>
+    </body>
+</html>
+
